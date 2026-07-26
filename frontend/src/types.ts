@@ -21,6 +21,7 @@ export interface DatasetSummary {
   feature_count: number;
   geometry_types: string[];
   crs: CrsInfo;
+  original_crs: CrsInfo | null;
   bounds: [number, number, number, number] | null;
   source_encoding: SourceEncoding;
   pipeline_log: string[];

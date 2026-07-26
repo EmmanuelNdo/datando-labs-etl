@@ -67,6 +67,7 @@ def _dataset_summary(dataset: Dataset) -> dict:
         "feature_count": len(gdf),
         "geometry_types": sorted({g.geom_type for g in gdf.geometry if g is not None and not g.is_empty}),
         "crs": crs_info,
+        "original_crs": dataset.original_crs,
         "bounds": bounds,
         "source_encoding": dataset.source_encoding,
         "pipeline_log": dataset.pipeline_log,
@@ -145,6 +146,7 @@ async def upload_dataset(files: list[UploadFile] = File(...)) -> dict:
 
     dataset = store.create(saved_names, fmt.key, gdf)
     dataset.source_encoding = source_encoding
+    dataset.original_crs = crs_service.describe_crs(gdf.crs)
     dataset.upload_dir.rmdir()
     incoming_dir.rename(dataset.upload_dir)
     dataset.log(f"Import: {fmt.label} ({len(saved_names)} fichier(s)), {len(gdf)} entités")
@@ -193,6 +195,7 @@ def set_source_crs(dataset_id: str, body: ReprojectRequest) -> dict:
         dataset.gdf = dataset.gdf.set_crs(epsg=body.target_epsg, allow_override=True)
     except Exception as exc:
         raise HTTPException(status_code=400, detail=f"CRS invalide: {exc}") from exc
+    dataset.original_crs = crs_service.describe_crs(dataset.gdf.crs)
     dataset.log(f"CRS source défini manuellement: EPSG:{body.target_epsg}")
     return {**_dataset_summary(dataset), "preview": _preview_geojson(dataset)}
 

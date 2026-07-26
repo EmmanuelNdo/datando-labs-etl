@@ -72,6 +72,12 @@ export default function App() {
 
       <Stepper current={step} unlocked={unlockedSteps} onSelect={setStep} />
 
+      {error && step !== "upload" && (
+        <div className="card error-banner">
+          <strong>Erreur :</strong> {error}
+        </div>
+      )}
+
       <main className="app-main">
         <div className="pipeline-column">
           {step === "upload" && (

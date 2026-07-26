@@ -25,6 +25,7 @@ class Dataset:
     gdf: gpd.GeoDataFrame
     source_encoding: dict = field(default_factory=dict)
     pipeline_log: list[str] = field(default_factory=list)
+    original_crs: dict | None = None
 
     def log(self, message: str) -> None:
         self.pipeline_log.append(message)
