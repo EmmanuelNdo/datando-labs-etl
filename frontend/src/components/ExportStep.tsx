@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { exportDataset } from "../api";
+import { exportDataset, toAbsoluteApiUrl } from "../api";
 
 const EXPORT_FORMATS = [
   { key: "geopackage", label: "GeoPackage (.gpkg)" },
@@ -25,7 +25,7 @@ export default function ExportStep({ datasetId }: Props) {
     setError(null);
     try {
       const { download_url } = await exportDataset(datasetId, format);
-      window.location.href = download_url;
+      window.location.href = toAbsoluteApiUrl(download_url);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {

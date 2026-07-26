@@ -85,3 +85,11 @@ export async function exportDataset(id: string, targetFormat: string): Promise<{
     })
   );
 }
+
+// Le backend renvoie un chemin relatif (/api/datasets/...) car il ignore son
+// propre domaine public. En prod, frontend et backend sont sur des origines
+// différentes (Vercel / Render) : il faut donc préfixer avec API_ROOT pour
+// obtenir une URL de téléchargement valide.
+export function toAbsoluteApiUrl(relativeUrl: string): string {
+  return `${API_ROOT}${relativeUrl}`;
+}
