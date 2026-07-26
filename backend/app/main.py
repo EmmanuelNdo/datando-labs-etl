@@ -286,7 +286,8 @@ def download_dataset(dataset_id: str, format: str) -> FileResponse:
 
     if format == "shapefile":
         # Le shapefile est multi-fichiers : on zippe pour un download unique.
-        zip_base = dataset.upload_dir / "export" / "export"
+        # Le zip est écrit HORS du dossier archivé, sinon il s'inclut lui-même.
+        zip_base = dataset.upload_dir / "export_shapefile"
         archive = shutil.make_archive(str(zip_base), "zip", root_dir=out_path.parent)
         return FileResponse(archive, filename="export_shapefile.zip", media_type="application/zip")
 
