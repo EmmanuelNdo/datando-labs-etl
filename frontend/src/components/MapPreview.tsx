@@ -22,14 +22,22 @@ export default function MapPreview({ geojson }: Props) {
       style: {
         version: 8,
         sources: {
-          osm: {
+          basemap: {
             type: "raster",
-            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+            // tile.openstreetmap.org interdit l'usage embarqué dans une appli tierce
+            // (politique d'utilisation) ; CARTO fournit des tuiles gratuites conçues
+            // pour ce cas d'usage, avec attribution OSM + CARTO.
+            tiles: [
+              "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+              "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+              "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+              "https://d.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+            ],
             tileSize: 256,
-            attribution: "&copy; OpenStreetMap contributors",
+            attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
           },
         },
-        layers: [{ id: "osm", type: "raster", source: "osm" }],
+        layers: [{ id: "basemap", type: "raster", source: "basemap" }],
       },
       center: [2.35, 46.6],
       zoom: 4.5,
