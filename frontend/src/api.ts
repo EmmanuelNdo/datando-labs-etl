@@ -6,7 +6,10 @@ import type {
   QualityReport,
 } from "./types";
 
-const BASE = "/api";
+// En dev, le proxy Vite redirige /api vers le backend local (voir vite.config.ts).
+// En prod, VITE_API_BASE_URL doit pointer vers l'URL publique du backend déployé.
+const API_ROOT = import.meta.env.VITE_API_BASE_URL ?? "";
+const BASE = `${API_ROOT}/api`;
 
 async function handle<T>(res: Response): Promise<T> {
   if (!res.ok) {

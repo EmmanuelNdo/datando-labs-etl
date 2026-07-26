@@ -80,6 +80,39 @@ backend sur `http://localhost:8000` (voir `vite.config.ts`).
 docker compose up --build
 ```
 
+## Déploiement en ligne (test public)
+
+Le projet est prêt pour un déploiement gratuit en deux services séparés :
+backend sur [Render](https://render.com), frontend sur
+[Vercel](https://vercel.com). Les deux se connectent directement à ce dépôt
+GitHub — aucune credential n'est nécessaire de mon côté, c'est ton compte qui
+autorise l'accès au repo.
+
+### 1. Backend sur Render
+
+1. Sur [render.com](https://render.com), *New > Blueprint*, connecte le repo
+   `EmmanuelNdo/datando-labs-etl` sur la branche
+   `claude/geospatial-etl-mvp-bnoztk`.
+2. Render détecte `render.yaml` à la racine et configure automatiquement le
+   service Python (`backend/`, `uvicorn app.main:app`).
+3. Une fois déployé, note l'URL publique, par exemple
+   `https://datando-geo-etl-backend.onrender.com`.
+
+(Le plan gratuit Render met le service en veille après inactivité — la
+première requête après une pause peut prendre ~30s à répondre.)
+
+### 2. Frontend sur Vercel
+
+1. Sur [vercel.com](https://vercel.com), *Add New > Project*, importe le même
+   repo, et choisis `frontend` comme **Root Directory**.
+2. Vercel détecte Vite automatiquement (voir `frontend/vercel.json`).
+3. Ajoute la variable d'environnement `VITE_API_BASE_URL` avec l'URL Render
+   obtenue à l'étape précédente (ex. `https://datando-geo-etl-backend.onrender.com`,
+   sans slash final).
+4. Déploie : Vercel donne une URL publique du type
+   `https://datando-labs-etl.vercel.app` — c'est le lien à partager pour
+   tester le pipeline en ligne.
+
 ## Limites connues du MVP
 
 - Pas de base de données : les sessions sont éphémères (RAM + `/tmp`).
