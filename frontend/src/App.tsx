@@ -28,8 +28,29 @@ export default function App() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    fetchSupportedFormats().then(setFormats).catch(() => undefined);
-    fetchCrsTargets().then(setCrsTargets).catch(() => undefined);
+    // Le backend gratuit (Render) peut être en veille et mettre ~30s à
+    // redémarrer sur la première requête : on retente plutôt que d'échouer
+    // silencieusement une fois pour toutes.
+    let cancelled = false;
+    const loadWithRetry = async <T,>(fetcher: () => Promise<T>, setter: (v: T) => void) => {
+      const delays = [0, 2000, 5000, 8000, 8000, 8000];
+      for (const delay of delays) {
+        if (cancelled) return;
+        if (delay) await new Promise((r) => setTimeout(r, delay));
+        try {
+          const result = await fetcher();
+          if (!cancelled) setter(result);
+          return;
+        } catch {
+          // on retente au prochain délai
+        }
+      }
+    };
+    loadWithRetry(fetchSupportedFormats, setFormats);
+    loadWithRetry(fetchCrsTargets, setCrsTargets);
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const runAction = async (action: () => Promise<DatasetSummary>) => {

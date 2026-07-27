@@ -45,6 +45,14 @@ export default function MapPreview({ geojson }: Props) {
     map.addControl(new maplibregl.NavigationControl(), "top-right");
     mapRef.current = map;
 
+    // MapLibre peut s'initialiser avant que le conteneur (dans une grille
+    // CSS) ait fini de se dimensionner : sans resize(), la carte ne charge
+    // que les tuiles pour ses dimensions initiales (souvent 0 ou erronées)
+    // et reste partiellement/totalement vide tant qu'aucune interaction ne
+    // force un nouveau calcul.
+    const resizeObserver = new ResizeObserver(() => map.resize());
+    resizeObserver.observe(containerRef.current);
+
     map.on("load", () => {
       map.addSource(SOURCE_ID, { type: "geojson", data: { type: "FeatureCollection", features: [] } });
       map.addLayer({
@@ -71,6 +79,7 @@ export default function MapPreview({ geojson }: Props) {
     });
 
     return () => {
+      resizeObserver.disconnect();
       map.remove();
       mapRef.current = null;
     };

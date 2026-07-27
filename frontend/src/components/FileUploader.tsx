@@ -23,8 +23,10 @@ export default function FileUploader({ formats, busy, onUpload, error }: Props) 
     <div className="card">
       <h2>1. Charger un jeu de données</h2>
       <p className="muted">
-        Formats acceptés : {formats.map((f) => f.label).join(", ") || "chargement..."}.
-        Pour un Shapefile, sélectionnez tous les fichiers du bundle (.shp, .dbf, .shx, .prj...).
+        {formats.length > 0
+          ? `Formats acceptés : ${formats.map((f) => f.label).join(", ")}.`
+          : "Connexion au serveur de traitement en cours (peut prendre jusqu'à 30s après une période d'inactivité)..."}
+        {" "}Pour un Shapefile, sélectionnez tous les fichiers du bundle (.shp, .dbf, .shx, .prj...).
       </p>
       <div
         className={`dropzone ${dragActive ? "dropzone-active" : ""}`}
