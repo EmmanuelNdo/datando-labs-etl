@@ -12,8 +12,6 @@ export default function FileUploader({ formats, busy, onUpload, error }: Props) 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [dragActive, setDragActive] = useState(false);
 
-  const acceptExt = formats.flatMap((f) => f.extensions).join(",");
-
   const handleFiles = (fileList: FileList | null) => {
     if (!fileList || fileList.length === 0) return;
     onUpload(Array.from(fileList));
@@ -48,7 +46,9 @@ export default function FileUploader({ formats, busy, onUpload, error }: Props) 
           type="file"
           multiple
           hidden
-          accept={acceptExt}
+          // Pas de filtre "accept" : les navigateurs/OS appliquent ce filtre de
+          // façon peu fiable (masque parfois tous les fichiers dans la boîte de
+          // dialogue). Le format est de toute façon validé côté serveur à l'upload.
           onChange={(e) => handleFiles(e.target.files)}
         />
       </div>
